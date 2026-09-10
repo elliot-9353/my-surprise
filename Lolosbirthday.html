@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Happy Birthday! ❤️</title>
+    
+    <script>
+      // كلمة السر التي يجب إدخالها
+      const password = "9353"; // استبدل 1234 بكلمة السر أو التاريخ المطلوب
+    
+      let inputPass = prompt("حطي الرقم الي قولتهولك يعمري❤️:");
+      
+      while (inputPass !== password) {
+        inputPass = prompt("كلمة السر خاطئة! حاول مجدداً:");
+      }
+    </script>
+  <!-- Canvas Confetti & AOS Animations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <!-- Tailwind CSS for Responsive Styling -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg-color: #0b1120;
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --accent-color: #ec4899;
+      --text-color: #f8fafc;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      text-align: center;
+      line-height: 1.6;
+      transition: background 1.5s ease;
+      scroll-behavior: smooth;
+    }
+
+    /* 3D Cake & Candle Styles */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+      position: relative;
+      width: 100%;
+    }
+
+    .scene-3d {
+      perspective: 1200px;
+      margin: 25px auto 15px auto;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .cake-3d-wrapper {
+      position: relative;
+      transform-style: preserve-3d;
+      transform: translateX(-4px) rotateX(12deg) rotateY(-2deg);
+      transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cake-3d-wrapper:hover {
+      transform: translateX(-4px) rotateX(4deg) scale(1.03);
+    }
+
+    /* Candles Responsive */
+    .candle-group-3d {
+      display: flex;
+      direction: ltr !important;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 8px;
+      margin-bottom: -18px;
+      position: relative;
+      z-index: 20;
+    }
+
+    .number-candle-3d {
+      font-size: clamp(3.8rem, 12vw, 5rem);
+      font-weight: 900;
+      font-family: 'Arial Black', sans-serif;
+      line-height: 1;
+      position: relative;
+      color: #f43f5e;
+      background: linear-gradient(180deg, #ffffff 0%, #fbcfe8 30%, #e11d48 70%, #881337 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.8));
+    }
+
+    .wick-3d {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 14px;
+      background: linear-gradient(to bottom, #0f172a, #475569);
+      border-radius: 2px;
+    }
+
+    .flame-3d {
+      position: absolute;
+      top: -34px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      width: 22px;
+      height: 36px;
+      background: radial-gradient(ellipse at bottom, #ffffff 10%, #fef08a 30%, #f97316 60%, #dc2626 90%);
+      border-radius: 50% 50% 20% 20%;
+      box-shadow: 0 0 20px #fde047, 0 0 40px #f97316, 0 0 60px #ef4444;
+      opacity: 0;
+      visibility: hidden;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+      z-index: 25;
+    }
+
+    .flame-3d.active {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+      visibility: visible;
+      animation: burnFlicker 0.1s infinite alternate ease-in-out;
+    }
+
+    @keyframes burnFlicker {
+      0% { transform: translateX(-50%) scale(1) rotate(-2deg); filter: drop-shadow(0 0 15px #f97316); }
+      100% { transform: translateX(-50%) scale(1.1) rotate(2deg); filter: drop-shadow(0 0 25px #ef4444); }
+    }
+
+    /* Multi-Tier Cake Body Responsive */
+    .cake-tier-top {
+      width: clamp(150px, 50vw, 190px);
+      height: clamp(65px, 20vw, 85px);
+      background: linear-gradient(180deg, #fda4af 0%, #f43f5e 50%, #be123c 100%);
+      border-radius: 20px 20px 10px 10px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 
+        0 10px 20px rgba(0, 0, 0, 0.3),
+        inset 0 6px 12px rgba(255, 255, 255, 0.5),
+        inset 0 -8px 15px rgba(0, 0, 0, 0.4);
+      border-top: 8px solid #ffffff;
+    }
+
+    .cake-tier-bottom {
+      width: clamp(210px, 72vw, 270px);
+      height: clamp(85px, 26vw, 110px);
+      background: linear-gradient(180deg, #fb7185 0%, #e11d48 50%, #881337 100%);
+      border-radius: 22px 22px 14px 14px;
+      position: relative;
+      margin-top: -15px;
+      z-index: 5;
+      box-shadow: 
+        0 20px 35px rgba(0, 0, 0, 0.6),
+        inset 0 8px 15px rgba(255, 255, 255, 0.4),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.5);
+      border-top: 10px solid #ffffff;
+    }
+
+    /* Cream Dripping Details */
+    .cream-drips-top {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 22px;
+      background: #ffffff;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+
+    .cream-drips-bottom {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 26px;
+      background: #ffffff;
+      border-radius: 0 0 14px 14px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    }
+
+    /* Decorative Pearls */
+    .decorations {
+      position: absolute;
+      width: 100%; height: 100%;
+      top: 0; left: 0;
+      pointer-events: none;
+    }
+
+    .pearl {
+      position: absolute;
+      width: 8px; height: 8px;
+      background: radial-gradient(circle at 35% 35%, #ffffff, #fef08a, #ca8a04);
+      border-radius: 50%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    }
+
+    /* Plate Responsive */
+    .plate-3d {
+      width: clamp(250px, 85vw, 330px);
+      height: 20px;
+      background: linear-gradient(90deg, #475569 0%, #f8fafc 40%, #cbd5e1 60%, #334155 100%);
+      border-radius: 50%;
+      margin: -10px 0 0 0;
+      box-shadow: 0 25px 45px rgba(0, 0, 0, 0.7);
+    }
+
+    .glass-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: clamp(18px, 5vw, 30px);
+      max-width: 680px;
+      width: 100%;
+      margin: 15px auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+
+    /* Timer Container Responsive Grid */
+    .timer-container {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 15px;
+    }
+
+    .timer-box {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 5px;
+      border-radius: 12px;
+      min-width: 0;
+      font-size: 0.85rem;
+    }
+
+    .timer-number {
+      font-size: clamp(1.2rem, 4vw, 1.8rem);
+      font-weight: bold;
+      color: var(--accent-color);
+    }
+
+    .timeline-section {
+      padding: 40px 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .timeline {
+      position: relative;
+      margin: 30px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      top: 0; right: 50%;
+      width: 4px; height: 100%;
+      background: var(--accent-color);
+      transform: translateX(50%);
+    }
+
+    .timeline-item {
+      margin-bottom: 30px;
+      position: relative;
+      width: 50%;
+      padding: 0 15px;
+    }
+
+    .timeline-item:nth-child(odd) { right: 0; text-align: right; }
+    .timeline-item:nth-child(even) { right: 50%; text-align: left; }
+
+    .timeline-content {
+      background: var(--card-bg);
+      padding: 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .timeline-date {
+      color: var(--accent-color);
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    /* Floating Music Control Button Responsive */
+    .music-btn {
+      position: fixed;
+      bottom: 15px;
+      left: 15px;
+      background: var(--accent-color);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.2s ease;
+    }
+
+    .music-btn:hover {
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .timeline::before { right: 20px; }
+      .timeline-item { 
+        width: 100% !important; 
+        right: 0 !important; 
+        padding-right: 40px; 
+        padding-left: 0;
+        text-align: right !important; 
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Audio Player Control -->
+  <button id="musicToggleBtn" class="music-btn" onclick="toggleAudio()">
+    🎵 تشغيل الموسيقى
+  </button>
+
+  <div class="hero" id="heroSection">
+    <h1 id="mainTitle" class="text-2xl sm:text-4xl font-extrabold mb-2 text-pink-400 leading-tight">عيد ميلاد سعيد يا أغلى البشر ✨</h1>
+    <p id="subTitle" class="text-slate-400 text-sm sm:text-lg mb-4">اضغطي على الكعكة !</p>
+    
+    <div class="scene-3d" onclick="lightCandle()">
+      <div class="cake-3d-wrapper">
+        <!-- Candle Group -->
+        <div class="candle-group-3d">
+          <div class="number-candle-3d">
+            <div class="wick-3d"></div>
+            <div class="flame-3d" id="flame"></div>
+            1
+          </div>
+          <div class="number-candle-3d">6</div>
+        </div>
+
+        <!-- Top Tier -->
+        <div class="cake-tier-top">
+          <div class="cream-drips-top"></div>
+          <div class="decorations">
+            <div class="pearl" style="top: 30px; left: 15px;"></div>
+            <div class="pearl" style="top: 40px; left: 50%;"></div>
+            <div class="pearl" style="top: 30px; right: 15px;"></div>
+          </div>
+        </div>
+
+        <!-- Bottom Tier -->
+        <div class="cake-tier-bottom">
+          <div class="cream-drips-bottom"></div>
+          <div class="decorations">
+            <div class="pearl" style="top: 40px; left: 20px;"></div>
+            <div class="pearl" style="top: 55px; left: 50%;"></div>
+            <div class="pearl" style="top: 40px; right: 20px;"></div>
+          </div>
+        </div>
+
+        <!-- Plate -->
+        <div class="plate-3d"></div>
+      </div>
+    </div>
+
+    <!-- Hidden Surprise Section revealed on click -->
+    <div id="surpriseArea" class="hidden w-full px-2 sm:px-4">
+      <div class="glass-card" data-aos="zoom-in">
+        <h2 style="color: var(--accent-color);" class="text-xl sm:text-2xl font-bold mb-3">كل عام وأنتِ بقلبي وبحياتي يكوشريي💙😙</h2>
+        <p class="text-slate-200 text-sm sm:text-base">اميرتي لؤلؤه 
+انا لما بدأت اكتبلك هي الرساله كنتي نايمة زعلانه لانك اتذكرتي اني ما احتفلت بعيد ميلادك الماضي 😔😔
+من كام دقيقة بعتللك رساله قولتلك فيها هعوضك وللامانة لحد هلق مش عارف كيف بس هحاول😔💕
+انا حاليا بس عايز اقولك اني بعشقك 😔💕
+بعشق تصرفاتك, بعشق اسمك, صوتك, شكلك, شعرك, جسمك, نفسك, روحك, قلبك وكل حاجة 
+وبعشق حبك ليا وزعلك مني وقربك مني 
+بحب لما تتغالسي عليا 
+بحب لما تقولي اسمي 
+بحب لما تناديني توتي😔
+اناا بعشقكك يلوجي عايزك ليا وبس ومش عايز حاجة تانية من الدنيا ديه غيرك💕😙
+محتاجكك جنبي ومحتاج اناديلك زوزتي وانا ماشي جنبك قدام الناس وروح فاقعك بوسة فالشارع 🥰💞
+اوثقي فيا يلوجي انا بحبك اكتر ما ممكن تتخيلي😔💙
+<br>
+اتمنى تعجبك الهديه يروحي وسامحيني على كل الي فات انا اسف ينن عيني😔😔😔
+<br>
+وبالمناسبه خليكي فاتحة الموقع لبعد ما تنتهي الغنية واستني بعدها شوية  
+ <br>
+بحبك يكوشريي💙😙</p>
+      </div>
+
+      <div class="glass-card" data-aos="fade-up">
+        <h3 class="text-lg sm:text-xl font-semibold text-slate-200">مع بعض من:</h3>
+        <div class="timer-container">
+          <div class="timer-box"><div class="timer-number" id="days">0</div>يوم</div>
+          <div class="timer-box"><div class="timer-number" id="hours">0</div>ساعة</div>
+          <div class="timer-box"><div class="timer-number" id="minutes">0</div>دقيقة</div>
+          <div class="timer-box"><div class="timer-number" id="seconds">0</div>ثانية</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timelineArea" class="timeline-section hidden">
+    <h2 class="text-xl sm:text-2xl font-bold mb-6 sm:mb-8" data-aos="fade-up">شريط ذكرياتنا ❤️</h2>
+    <div class="timeline">
+      
+     <div class="timeline-item" data-aos="fade-right">
+        <div class="timeline-content">
+          <div class="timeline-date">بداية الحكاية</div>
+          <h3 class="text-base sm:text-lg font-bold text-pink-400 mb-1">أول مرة حكينا فيها</h3>
+          <p class="text-sm sm:text-base">اول مره حكينا فيها خاص حدا منا اتوقع انو بعد كل هالسنين نكون هون😙💙؟</p>
+          <img src="1st_chat.jpg" alt="أول مرة حكينا فيها" class="w-full h-auto max-h-96 object-contain rounded-xl my-3 border border-white/10 shadow-md">
+        </div>
+      </div>
+
+      <div class="timeline-item" data-aos="fade-left">
+        <div class="timeline-content">
+          <div class="timeline-date">مميياااووو😹💙</div>
+          <h3 class="text-base sm:text-lg font-bold text-pink-400 mb-1">مش بقدر اقولك لاءا</h3>
+          <p class="text-sm sm:text-base">مين ئطتي؟؟🥰🤞</p>
+          <img src="cuteness.jpg" alt="صورة قطتي" class="w-full h-auto max-h-96 object-contain rounded-xl my-3 border border-white/10 shadow-md">
+        </div>
+      </div>
+
+      <div class="timeline-item" data-aos="fade-right">
+        <div class="timeline-content">
+          <div class="timeline-date">أول كوشري😎</div>
+          <h3 class="text-base sm:text-lg font-bold text-pink-400 mb-1">حاضر يكوشري🥺🥹</h3>
+          <p class="text-sm sm:text-base"></p>
+          <img src="koshari.jpg" alt="أول كوشري" class="w-full h-auto max-h-96 object-contain rounded-xl my-3 border border-white/10 shadow-md">
+        </div>
+      </div>
+
+      <div class="timeline-item" data-aos="fade-left">
+        <div class="timeline-content">
+          <div class="timeline-date">لما رجعنا لبعض 🤗✨</div>
+          <h3 class="text-base sm:text-lg font-bold text-pink-400 mb-1"></h3>
+          <p class="text-sm sm:text-base">وحشتينيييععع😹</p>
+          <img src="comeback.jpg" alt="لما رجعنا لبعض" class="w-full h-auto max-h-96 object-contain rounded-xl my-3 border border-white/10 shadow-md">
+        </div>
+      </div>
+
+            <div class="timeline-item" data-aos="fade-right">
+        <div class="timeline-content">
+          <div class="timeline-date">يوماً ما😎</div>
+          <h3 class="text-base sm:text-lg font-bold text-pink-400 mb-1"></h3>
+          <p class="text-sm sm:text-base"></p>
+          <img src="oneday.png" alt="أول كوشري" class="w-full h-auto max-h-96 object-contain rounded-xl my-3 border border-white/10 shadow-md">
+        </div>
+      </div>
+
+  <!-- Audio Element -->
+  <audio id="bgMusic" preload="auto"></audio>
+
+  <script>
+    AOS.init({ duration: 1000 });
+    let isLit = false;
+
+    // Playlist Setup
+    const music = document.getElementById('bgMusic');
+    const toggleBtn = document.getElementById('musicToggleBtn');
+    const playlist = ["music2.mp3" , "music3.mp3" , "music1.mp3"];
+    let currentTrack = 0;
+
+    music.src = playlist[currentTrack];
+
+    // Transition between tracks automatically
+    music.addEventListener('ended', function() {
+      currentTrack = (currentTrack + 1) % playlist.length;
+      music.src = playlist[currentTrack];
+      music.play();
+    });
+
+    function playAudio() {
+      music.play().then(() => {
+        toggleBtn.innerHTML = "⏸️ إيقاف الموسيقى";
+      }).catch(err => {
+        console.log("Autoplay block:", err);
+        toggleBtn.innerHTML = "🎵 تشغيل الموسيقى";
+      });
+    }
+
+    function toggleAudio() {
+      if (music.paused) {
+        playAudio();
+      } else {
+        music.pause();
+        toggleBtn.innerHTML = "🎵 تشغيل الموسيقى";
+      }
+    }
+
+    function lightCandle() {
+      if (isLit) return;
+      isLit = true;
+
+      const flame = document.getElementById('flame');
+      flame.classList.add('active');
+
+      confetti({ particleCount: 220, spread: 110, origin: { y: 0.5 } });
+
+      playAudio();
+
+      setTimeout(function() {
+        document.getElementById('subTitle').innerText = "أتمنى لكِ عاماً مليئاً بالحب والسعادة ❤️";
+        document.getElementById('surpriseArea').classList.remove('hidden');
+        document.getElementById('timelineArea').classList.remove('hidden');
+        
+        AOS.refresh();
+
+        document.getElementById('surpriseArea').scrollIntoView({ behavior: 'smooth' });
+      }, 1200);
+    }
+
+    // Relationship counter setup
+    const startDate = new Date("2025-02-11T00:10:00").getTime();
+
+    setInterval(function() {
+      const now = new Date().getTime();
+      const difference = now - startDate;
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      document.getElementById("days").innerText = days;
+      document.getElementById("hours").innerText = hours;
+      document.getElementById("minutes").innerText = minutes;
+      document.getElementById("seconds").innerText = seconds;
+    }, 1000);
+  </script>
+</body>
+</html>
